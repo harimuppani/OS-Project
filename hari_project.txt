@@ -1,0 +1,119 @@
+#include<iostream>
+#include<windows.h>
+#include <ctime>
+#include<conio.h>
+using namespace std;
+class job
+{
+	public:
+	int at;   	//arrival time
+	int bt;   	//burst time
+	int ready;	//to check arrival
+	void get()
+	{
+		cout<<("Enter Arrival time :");
+		cin>>at;
+		cout<<("Enter Burst time :");
+		cin>>bt;
+		ready=0;
+		
+	}
+};
+int Last(int arr[], int n, int x)
+{
+    int first = -1, last = -1;
+    for (int i=0; i<n; i++)
+    {
+        if (x != arr[i])
+            continue;
+        if (first == -1)
+            first = i;
+        last = i;
+    }
+    if (first != -1)
+        return last;
+}
+
+
+int main()
+{
+	job p[100];
+	int tb=0;         //total burst time
+	int n;
+	int wt[100];
+	int w[100];
+	int at1[100];
+	cout<<("Enter No. of process you want add :");
+	cin>>n;
+	for(int i=1;i<=n;i++)
+	{
+		cout<<"process "<<i<<" : \n";
+		p[i].get();
+		tb=tb+p[i].bt;
+		wt[i]=p[i].bt;
+		at1[i]=p[i].at;
+	}
+	int tb1=tb;
+	int j=0;
+	int count=0;
+	cout<<"EXECUTION ---\n";
+	while(tb>0)
+	{
+		count=count+1;
+		for(int i=1;i<=n;i++)
+		{
+			if(p[i].at<=count)
+			{
+				p[i].ready=1;
+			}
+			else
+			{
+				p[i].ready=0;
+			}
+		}
+		int min=100;
+		for(int i=1;i<=n;i++)
+		{
+			if(p[i].ready==1)
+			{
+				if(min>wt[i] && wt[i]!=0)			
+				{
+					min=wt[i];
+					j=i;
+					
+				}
+			}
+		}
+		cout<<count<<" :   P["<<j<<"]\n";
+		w[count]=j;
+		wt[j]=wt[j]-1;
+		tb=tb-1;
+		
+	}
+	
+	int ct[n];   //completion time
+	for(int i=1;i<=n;i++)
+	{
+		int y=w[i];
+		ct[i]=Last(w,tb1,y);
+	}
+	ct[1]=ct[1]+1;
+	int waiting[100];   //waiting time
+	for(int i=1;i<=n;i++)
+	{
+		waiting[i]=ct[i]-at1[i]-p[i].bt+1;
+	}
+		cout<<"Process Name  |   Completion time | Wating time"<<endl;
+
+	for(int i=1;i<=n;i++)
+	{
+		cout<<"P["<<i<<"]"<<"          |   "<<ct[i]<<"               |"<<"   "<<waiting[i]<<endl;
+	}   
+	int tw=0;   //total waiting time
+	for(int i=1;i<=n;i++)
+	{
+		tw=tw+waiting[i];
+	}
+	float avgwt=tw/n;
+	cout<<"Total Waiting Time  : "<<avgwt<<endl;
+}
